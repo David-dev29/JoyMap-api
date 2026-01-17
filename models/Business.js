@@ -1,0 +1,55 @@
+// models/Business.js
+import mongoose from "mongoose";
+
+const businessSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
+
+    logo: { type: String, default: null },
+    banner: { type: String, default: null },
+
+    // Icono del marker (puede venir de categoría o sobrescribirse)
+    mapIcon: {
+      type: String,
+      default: "📍",
+      trim: true,
+    },
+
+    // Categoría (referencia real)
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CategoryBusiness",
+      required: true
+    },
+
+    isActive: { type: Boolean, default: true },
+    isOpen: { type: Boolean, default: true },
+
+    deliveryTime: {
+      min: { type: Number, default: 20 },
+      max: { type: Number, default: 40 },
+    },
+
+    deliveryCost: { type: Number, default: 0 },
+    minOrderAmount: { type: Number, default: 0 },
+
+    location: {
+      type: { type: String, enum: ["Point"], required: true },
+      coordinates: { type: [Number], required: true },
+    },
+
+    address: { type: String, required: true },
+
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    totalReviews: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+);
+
+// Índices
+businessSchema.index({ location: "2dsphere" });
+businessSchema.index({ category: 1 });
+businessSchema.index({ isActive: 1, isOpen: 1 });
+
+export default mongoose.model("Business", businessSchema);

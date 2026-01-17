@@ -1,0 +1,42 @@
+{
+  "name": "takalleapp-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "dataUsers": "node ./models/data/users.js",
+    "dataProducts": "node ./models/data/products.js",
+    "dataOrders": "node ./models/data/orders.js",
+    "dataCategories": "node ./models/data/categories.js",
+    "dataBusinesses": "node ./models/data/businesses.js",
+    "dataCategoriesBusiness": "node ./models/data/categoriesBusiness.js",
+    "fix-products": "node ./models/data/fixProducts.js",
+    "fix-CategoryIds": "node ./models/data/fixCategoryIds.js",
+     "fix-Categories": "node ./models/data/fixBusinessCategories.js",
+     "addTypeCategories": "node ./models/data/addTypeToCategories.js",
+    "migrateImages": "node ./models/data/migrateImages.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.888.0",
+    "@aws-sdk/s3-request-presigner": "^3.888.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.1",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "slugify": "^1.6.6",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.28.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3"
+  }
+}

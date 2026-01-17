@@ -1,0 +1,26 @@
+import { Router } from 'express';
+import userRouter from "./users.js";
+import orderRouter from "./orders.js";
+import storesRouter from "./stores.js";
+import categoriesRouter from "./categories.js";
+import subcategoriesRouter from "./subcategories.js";
+import productsRouter from "./products.js";
+import kitchensRouter from "./kitchens.js";
+import businessesRouter from "./business.js";
+import categoriesBusinessesRouter from "./categoriesBusiness.js";
+
+
+const router = Router();
+
+router.use('/users', userRouter)
+router.use('/orders', orderRouter)
+router.use('/stores', storesRouter)
+router.use('/categories', categoriesRouter)
+router.use('/subcategories', subcategoriesRouter)
+router.use('/products', productsRouter)
+router.use('/kitchens', kitchensRouter)
+router.use('/map', businessesRouter)
+router.use('/businesses', businessesRouter)
+router.use('/business-categories', categoriesBusinessesRouter)
+
+export default router
