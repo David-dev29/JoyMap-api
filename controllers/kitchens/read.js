@@ -15,7 +15,7 @@ export const allKitchens = async (req, res) => {
   };
   
   
-  // Obtener cocina por ID
+  // Obtener cocina por I D 
   export const KitchenById = async (req, res) => {
     try {
       const { id } = req.params;
