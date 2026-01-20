@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { verifyToken, requireRole } from "../middlewares/auth.js";
 import { checkProductOwnership } from "../middlewares/checkOwnership.js";
 import upload from "../middlewares/upload.js";
-import { allProducts, oneProduct } from '../controllers/products/read.js';
+import { allProducts, oneProduct, productsByBusiness } from '../controllers/products/read.js';
 import { createProduct } from '../controllers/products/create.js';
 import { updateProduct } from '../controllers/products/update.js';
 import { deleteProduct } from '../controllers/products/delete.js';
@@ -11,6 +11,7 @@ const router = Router();
 
 // GET - Público
 router.get('/', allProducts);
+router.get('/business/:businessId', productsByBusiness);
 router.get('/:id', oneProduct);
 
 // POST - Solo admin y business_owner pueden crear productos

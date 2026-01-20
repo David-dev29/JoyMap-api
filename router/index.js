@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import authRouter from "./auth.js";
+import meRouter from "./me.js";
+import adminRouter from "./admin.js";
 import userRouter from "./users.js";
 import orderRouter from "./orders.js";
 import storesRouter from "./stores.js";
@@ -12,7 +14,12 @@ import categoriesBusinessesRouter from "./categoriesBusiness.js";
 
 const router = Router();
 
-router.use('/auth', authRouter)
+// Auth y rutas personales
+router.use('/auth', authRouter);
+router.use('/me', meRouter);
+router.use('/admin', adminRouter);
+
+// Recursos
 router.use('/users', userRouter)
 router.use('/orders', orderRouter)
 router.use('/stores', storesRouter)

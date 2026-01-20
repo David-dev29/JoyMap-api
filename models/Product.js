@@ -3,10 +3,17 @@ import { Schema, model } from "mongoose";
 let collection = "products";
 
 const schema = new Schema({
-  name: { 
-    type: String, 
+  name: {
+    type: String,
     required: true,
     trim: true
+  },
+  // Negocio al que pertenece este producto
+  businessId: {
+    type: Schema.Types.ObjectId,
+    ref: "Business",
+    required: true,
+    index: true
   },
   description: { 
     type: String,
