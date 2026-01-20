@@ -10,6 +10,7 @@ import "./models/Product.js";
 
 import path from "path";
 import cors from "cors";
+import helmet from "helmet";
 import morgan from "morgan";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -18,11 +19,10 @@ import indexRouter from "./router/index.js";
 const app = express();
 const server = createServer(app);
 
-// 🔒 ORÍGENES PERMITIDOS
-const allowedOrigins = [
-  "http://192.168.100.7:5173",
-  "http://192.168.100.7:5174",
-];
+// 🔒 ORÍGENES PERMITIDOS (desde .env)
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173', 'http://localhost:5174'];
 
 // 🔌 Socket.IO con CORS CORRECTO
 const io = new Server(server, {
@@ -33,7 +33,8 @@ const io = new Server(server, {
   },
 });
 
-// 🔧 Middleware Express (MISMO CORS)
+// 🔧 Middleware Express
+app.use(helmet());
 app.use(
   cors({
     origin: allowedOrigins,
