@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verifyToken } from "../middlewares/auth.js";
+import { verifyToken, requireRole } from "../middlewares/auth.js";
 import { createStore } from "../controllers/stores/create.js";
 import { allStores } from "../controllers/stores/read.js";
 import { updateStore } from "../controllers/stores/update.js";
@@ -11,10 +11,11 @@ const router = Router();
 // GET - Público
 router.get("/", allStores);
 
-// POST - Protegido
+// POST - Solo admin
 router.post(
   "/",
   verifyToken,
+  requireRole("admin"),
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "banner", maxCount: 1 },
@@ -23,10 +24,11 @@ router.post(
   createStore
 );
 
-// PUT - Protegido
+// PUT - Solo admin y business_owner
 router.put(
   "/:id",
   verifyToken,
+  requireRole("admin", "business_owner"),
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "banner", maxCount: 1 },
@@ -35,7 +37,7 @@ router.put(
   updateStore
 );
 
-// DELETE - Protegido
-router.delete("/:id", verifyToken, destroyStore);
+// DELETE - Solo admin
+router.delete("/:id", verifyToken, requireRole("admin"), destroyStore);
 
 export default router;

@@ -17,6 +17,12 @@ const schema = new Schema({
     enum: ["admin", "business_owner", "driver", "customer"],
     default: "customer"
   },
+  // Solo para business_owner: negocio asignado
+  businessId: {
+    type: Schema.Types.ObjectId,
+    ref: "Business",
+    default: null
+  },
 }, {
   timestamps: true
 });

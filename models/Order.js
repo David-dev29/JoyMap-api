@@ -4,6 +4,7 @@ const collection = "orders";
 
 const schema = new Schema({
   customerId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+  businessId: { type: Schema.Types.ObjectId, ref: 'Business', default: null },
 
   items: [
     {

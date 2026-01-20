@@ -43,6 +43,13 @@ const businessSchema = new mongoose.Schema(
 
     rating: { type: Number, default: 0, min: 0, max: 5 },
     totalReviews: { type: Number, default: 0 },
+
+    // Owner del negocio (business_owner)
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      default: null
+    },
   },
   { timestamps: true }
 );

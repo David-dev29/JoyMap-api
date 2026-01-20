@@ -18,7 +18,8 @@
     "fix-Categories": "node ./models/data/fixBusinessCategories.js",
     "addTypeCategories": "node ./models/data/addTypeToCategories.js",
     "migrateImages": "node ./models/data/migrateImages.js",
-    "create-admin": "node seeds/createAdmin.js"
+    "create-admin": "node seeds/createAdmin.js",
+    "assign-owner": "node seeds/assignBusinessOwner.js"
   },
   "keywords": [],
   "author": "",

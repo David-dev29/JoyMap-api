@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { verifyToken } from "../middlewares/auth.js";
+import { verifyToken, requireRole } from "../middlewares/auth.js";
+import { checkBusinessOwnership } from "../middlewares/checkOwnership.js";
 import { allMapBusinesses, getAllBusinesses, mapBusinessByID, getBusinessesByType, getBusinessBySlug } from "../controllers/businesses/read.js";
 import { createBusiness } from '../controllers/businesses/create.js';
 import { updateBusiness } from '../controllers/businesses/update.js';
@@ -27,20 +28,16 @@ router.get("/type/:type", getBusinessesByType);
 router.get("/:id", mapBusinessByID);
 
 
-// POST - Crear un nuevo negocio
-// Responde a: /api/businesses/create
-router.post('/create', verifyToken, uploadBusinessImages, createBusiness);
+// POST - Crear un nuevo negocio (solo admin)
+router.post('/create', verifyToken, requireRole("admin"), uploadBusinessImages, createBusiness);
 
-// PUT - Actualizar un negocio
-// Responde a: /api/businesses/:id
-router.put('/:id', verifyToken, uploadBusinessImages, updateBusiness);
+// PUT - Actualizar un negocio (admin o business_owner de ese negocio)
+router.put('/:id', verifyToken, requireRole("admin", "business_owner"), checkBusinessOwnership, uploadBusinessImages, updateBusiness);
 
-// DELETE - Eliminar negocio (físico)
-// Responde a: /api/businesses/:id
-router.delete('/:id', verifyToken, deleteBusiness);
+// DELETE - Eliminar negocio (solo admin)
+router.delete('/:id', verifyToken, requireRole("admin"), deleteBusiness);
 
-// PATCH - Desactivar negocio (soft delete)
-// Responde a: /api/businesses/:id/deactivate
-router.patch('/:id/deactivate', verifyToken, softDeleteBusiness);
+// PATCH - Desactivar negocio (solo admin)
+router.patch('/:id/deactivate', verifyToken, requireRole("admin"), softDeleteBusiness);
 
 export default router;

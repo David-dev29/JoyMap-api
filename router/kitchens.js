@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { verifyToken } from "../middlewares/auth.js";
+import { verifyToken, requireRole } from "../middlewares/auth.js";
 import { allKitchens, KitchenById } from '../controllers/kitchens/read.js';
 import { createKitchen } from '../controllers/kitchens/create.js';
 import { updateKitchen } from '../controllers/kitchens/update.js';
@@ -11,10 +11,10 @@ const router = Router();
 router.get('/', allKitchens);
 router.get('/:id', KitchenById);
 
-// POST/PUT/DELETE - Protegido
-router.post('/create', verifyToken, createKitchen);
-router.put('/:id', verifyToken, updateKitchen);
-router.delete('/:id', verifyToken, deleteKitchen);
+// POST/PUT/DELETE - Solo admin y business_owner
+router.post('/create', verifyToken, requireRole("admin", "business_owner"), createKitchen);
+router.put('/:id', verifyToken, requireRole("admin", "business_owner"), updateKitchen);
+router.delete('/:id', verifyToken, requireRole("admin", "business_owner"), deleteKitchen);
 
 export default router;
 

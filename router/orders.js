@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { verifyToken } from "../middlewares/auth.js";
+import { verifyToken, requireRole } from "../middlewares/auth.js";
+import { checkOrderOwnership } from "../middlewares/checkOwnership.js";
 import {
   activeOrders,
   allOrders,
@@ -16,21 +17,21 @@ import deleteOrder from "../controllers/orders/delete.js";
 
 const router = Router();
 
-// GET - Protegido (solo ver tus órdenes)
+// GET - Filtrado automático por rol en el controller
 router.get("/active", verifyToken, activeOrders);
 router.get("/", verifyToken, allOrders);
-router.get("/:id", verifyToken, orderById);
+router.get("/:id", verifyToken, checkOrderOwnership, orderById);
 
-// POST - Protegido
-router.post("/create", verifyToken, createOrder);
+// POST - Customer y admin pueden crear órdenes
+router.post("/create", verifyToken, requireRole("admin", "customer"), createOrder);
 
-// PUT - Protegido
-router.put("/update/:id", verifyToken, updateOrder);
-router.put("/:id/cancel", verifyToken, cancelOrder);
-router.post("/:id/register-payment", verifyToken, registerPayment);
-router.put("/:orderId/items/:itemId", verifyToken, updateOrderItemStatus);
+// PUT - Con verificación de ownership
+router.put("/update/:id", verifyToken, checkOrderOwnership, updateOrder);
+router.put("/:id/cancel", verifyToken, checkOrderOwnership, cancelOrder);
+router.post("/:id/register-payment", verifyToken, requireRole("admin", "business_owner"), checkOrderOwnership, registerPayment);
+router.put("/:orderId/items/:itemId", verifyToken, requireRole("admin", "business_owner"), updateOrderItemStatus);
 
-// DELETE - Protegido
-router.delete("/:id", verifyToken, deleteOrder);
+// DELETE - Solo admin puede eliminar órdenes
+router.delete("/:id", verifyToken, requireRole("admin"), deleteOrder);
 
 export default router;

@@ -61,19 +61,28 @@ export const allMapBusinesses = async (req, res, next) => {
   }
 };
 
-// 📋 Para el admin - Devuelve todo
+// 📋 Para el admin/dashboard - Filtra según rol
 export const getAllBusinesses = async (req, res) => {
   try {
-    const businesses = await Business.find({ isActive: true })
-      .populate('category', 'name slug icon type') // ✅ Agregado 'type'
+    let filter = { isActive: true };
+
+    // Si hay usuario autenticado y es business_owner, solo ve su negocio
+    if (req.user && req.user.role === "business_owner" && req.user.businessId) {
+      filter._id = req.user.businessId;
+    }
+
+    const businesses = await Business.find(filter)
+      .populate("category", "name slug icon type")
+      .populate("owner", "name email")
       .sort({ createdAt: -1 });
 
     res.json({
       success: true,
+      count: businesses.length,
       response: businesses
     });
   } catch (error) {
-    console.error("❌ Error getAllBusinesses:", error);
+    console.error("Error getAllBusinesses:", error);
     res.status(500).json({
       success: false,
       message: "Error al obtener negocios"
