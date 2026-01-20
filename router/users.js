@@ -1,22 +1,16 @@
 import { Router } from "express";
+import { verifyToken } from "../middlewares/auth.js";
 import { allUsers } from "../controllers/users/read.js";
-import  createUser  from "../controllers/users/create.js";
-import  updateUser  from "../controllers/users/update.js";
-import  deleteUser  from "../controllers/users/delete.js";
+import createUser from "../controllers/users/create.js";
+import updateUser from "../controllers/users/update.js";
+import deleteUser from "../controllers/users/delete.js";
 
 const router = Router();
 
-router.get('/', allUsers)
+// Todas las rutas de users requieren autenticación
+router.get('/', verifyToken, allUsers);
+router.post('/create', verifyToken, createUser);
+router.put('/:id', verifyToken, updateUser);
+router.delete('/:id', verifyToken, deleteUser);
 
-// POST /api/stores
-router.post('/create', createUser);
-
-
-// PUT /api/stores/:id
-router.put('/:id', updateUser);
-
-
-// DELETE /api/stores/:id
-router.delete('/:id', deleteUser);
-
-export default router
+export default router;

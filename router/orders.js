@@ -1,35 +1,36 @@
 import { Router } from "express";
-import { 
-  activeOrders, 
-  allOrders, 
-  orderById 
+import { verifyToken } from "../middlewares/auth.js";
+import {
+  activeOrders,
+  allOrders,
+  orderById
 } from "../controllers/orders/read.js";
 import createOrder from "../controllers/orders/create.js";
-import { 
-  updateOrder, 
-  cancelOrder, 
-  registerPayment, 
-  updateOrderItemStatus 
+import {
+  updateOrder,
+  cancelOrder,
+  registerPayment,
+  updateOrderItemStatus
 } from "../controllers/orders/update.js";
 import deleteOrder from "../controllers/orders/delete.js";
 
 const router = Router();
 
-// GET
-router.get("/active", activeOrders); 
-router.get("/", allOrders);
-router.get("/:id", orderById);
+// GET - Protegido (solo ver tus órdenes)
+router.get("/active", verifyToken, activeOrders);
+router.get("/", verifyToken, allOrders);
+router.get("/:id", verifyToken, orderById);
 
-// POST
-router.post("/create", createOrder);
+// POST - Protegido
+router.post("/create", verifyToken, createOrder);
 
-// PUT
-router.put("/update/:id", updateOrder);                  // Actualiza toda la orden
-router.put("/:id/cancel", cancelOrder);                  // Cancelar orden
-router.post("/:id/register-payment", registerPayment);   // Registrar pago
-router.put("/:orderId/items/:itemId", updateOrderItemStatus); // Cambiar estado de un item
+// PUT - Protegido
+router.put("/update/:id", verifyToken, updateOrder);
+router.put("/:id/cancel", verifyToken, cancelOrder);
+router.post("/:id/register-payment", verifyToken, registerPayment);
+router.put("/:orderId/items/:itemId", verifyToken, updateOrderItemStatus);
 
-// DELETE
-router.delete("/:id", deleteOrder);
+// DELETE - Protegido
+router.delete("/:id", verifyToken, deleteOrder);
 
 export default router;

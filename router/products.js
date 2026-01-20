@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { verifyToken } from "../middlewares/auth.js";
 import upload from "../middlewares/upload.js";
 import { allProducts, oneProduct } from '../controllers/products/read.js';
 import { createProduct } from '../controllers/products/create.js';
@@ -14,17 +15,14 @@ router.get('/', allProducts);
 router.get('/:id', oneProduct);
 
 
-// POST /api/stores
-router.post('/create',upload.single("image"), createProduct);
+// POST /api/products
+router.post('/create', verifyToken, upload.single("image"), createProduct);
 
+// PUT /api/products/:id
+router.put("/:id", verifyToken, upload.single("image"), updateProduct);
 
-// PUT /api/stores/:id
-
-router.put("/:id", upload.single("image"), updateProduct);
-
-
-// DELETE /api/stores/:id
-router.delete('/:id', deleteProduct);
+// DELETE /api/products/:id
+router.delete('/:id', verifyToken, deleteProduct);
 
 export default router;
 

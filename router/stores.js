@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { verifyToken } from "../middlewares/auth.js";
 import { createStore } from "../controllers/stores/create.js";
 import { allStores } from "../controllers/stores/read.js";
 import { updateStore } from "../controllers/stores/update.js";
@@ -7,32 +8,34 @@ import upload from "../middlewares/upload.js";
 
 const router = Router();
 
-// GET /api/stores → Obtener tienda
+// GET - Público
 router.get("/", allStores);
 
-// POST /api/stores → Crear tienda con logo, banner y textLogo
+// POST - Protegido
 router.post(
   "/",
+  verifyToken,
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "banner", maxCount: 1 },
-    { name: "textLogo", maxCount: 1 } // ✨ NUEVO
+    { name: "textLogo", maxCount: 1 }
   ]),
   createStore
 );
 
-// PUT /api/stores/:id → Actualizar tienda con logo/banner/textLogo opcionales
+// PUT - Protegido
 router.put(
   "/:id",
+  verifyToken,
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "banner", maxCount: 1 },
-    { name: "textLogo", maxCount: 1 } // ✨ NUEVO
+    { name: "textLogo", maxCount: 1 }
   ]),
   updateStore
 );
 
-// DELETE /api/stores/:id → Eliminar tienda
-router.delete("/:id", destroyStore);
+// DELETE - Protegido
+router.delete("/:id", verifyToken, destroyStore);
 
 export default router;

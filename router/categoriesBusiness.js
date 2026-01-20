@@ -1,6 +1,6 @@
 // routes/category.routes.js
 import { Router } from "express";
-
+import { verifyToken } from "../middlewares/auth.js";
 import { getCategoriesBusiness, getCategoriesByType } from "../controllers/categoriesBusiness/read.js";
 import { createCategoryBusiness } from "../controllers/categoriesBusiness/create.js";
 import { updateCategoryBusiness } from "../controllers/categoriesBusiness/update.js";
@@ -8,11 +8,13 @@ import { deleteCategoryBusiness } from "../controllers/categoriesBusiness/delete
 
 const router = Router();
 
+// GET - Público
 router.get("/", getCategoriesBusiness);
-// ✅ NUEVO: Obtener categorías por tipo
 router.get("/type/:type", getCategoriesByType);
-router.post("/", createCategoryBusiness);
-router.put("/:id", updateCategoryBusiness);
-router.delete("/:id", deleteCategoryBusiness);
+
+// POST/PUT/DELETE - Protegido
+router.post("/", verifyToken, createCategoryBusiness);
+router.put("/:id", verifyToken, updateCategoryBusiness);
+router.delete("/:id", verifyToken, deleteCategoryBusiness);
 
 export default router;

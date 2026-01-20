@@ -4,15 +4,19 @@ let collection = "users";
 
 const schema = new Schema({
   name: { type: String, required: true },
-  email: { type: String, unique: true, sparse: true }, // opcional si no todos usan email
+  email: { type: String, unique: true, sparse: true },
   phone: { type: String, required: true },
-  password: { type: String, required: false },
+  password: { type: String, required: true, select: false },
   address: {
     street: { type: String },
     reference: { type: String },
-    coordinates: { type: [Number], index: '2dsphere' } // [lng, lat]
+    coordinates: { type: [Number], index: '2dsphere' }
   },
-  role: { type: String, enum: ['customer', 'delivery', 'admin'], default: 'customer' },
+  role: {
+    type: String,
+    enum: ["admin", "business_owner", "driver", "customer"],
+    default: "customer"
+  },
 }, {
   timestamps: true
 });

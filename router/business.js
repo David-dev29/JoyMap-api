@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { verifyToken } from "../middlewares/auth.js";
 import { allMapBusinesses, getAllBusinesses, mapBusinessByID, getBusinessesByType, getBusinessBySlug } from "../controllers/businesses/read.js";
 import { createBusiness } from '../controllers/businesses/create.js';
 import { updateBusiness } from '../controllers/businesses/update.js';
@@ -28,18 +29,18 @@ router.get("/:id", mapBusinessByID);
 
 // POST - Crear un nuevo negocio
 // Responde a: /api/businesses/create
-router.post('/create', uploadBusinessImages, createBusiness);
+router.post('/create', verifyToken, uploadBusinessImages, createBusiness);
 
 // PUT - Actualizar un negocio
 // Responde a: /api/businesses/:id
-router.put('/:id', uploadBusinessImages, updateBusiness);
+router.put('/:id', verifyToken, uploadBusinessImages, updateBusiness);
 
 // DELETE - Eliminar negocio (físico)
 // Responde a: /api/businesses/:id
-router.delete('/:id', deleteBusiness);
+router.delete('/:id', verifyToken, deleteBusiness);
 
 // PATCH - Desactivar negocio (soft delete)
 // Responde a: /api/businesses/:id/deactivate
-router.patch('/:id/deactivate', softDeleteBusiness);
+router.patch('/:id/deactivate', verifyToken, softDeleteBusiness);
 
 export default router;
