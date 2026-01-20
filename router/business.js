@@ -5,6 +5,13 @@ import { allMapBusinesses, getAllBusinesses, mapBusinessByID, getBusinessesByTyp
 import { createBusiness } from '../controllers/businesses/create.js';
 import { updateBusiness } from '../controllers/businesses/update.js';
 import { deleteBusiness, softDeleteBusiness } from '../controllers/businesses/delete.js';
+import {
+  checkBusinessAccess,
+  getBusinessCategories,
+  getBusinessProducts,
+  getBusinessOrders,
+  getBusinessStats
+} from '../controllers/businesses/dashboard.js';
 import { uploadBusinessImages } from '../middlewares/upload.js';
 
 const router = Router();
@@ -23,10 +30,20 @@ router.get("/slug/:slug", getBusinessBySlug);
 // ✅ NUEVO: Obtener negocios por tipo
 router.get("/type/:type", getBusinessesByType);
 
-// GET - Obtener negocio por ID
-// Responde a: /api/businesses/:id (sin /businesses/ duplicado)
+// ═══════════════════════════════════════════════════════════════
+// RUTAS DASHBOARD (protegidas) - Deben ir ANTES de /:id
+// ═══════════════════════════════════════════════════════════════
+router.get("/:id/categories", verifyToken, checkBusinessAccess, getBusinessCategories);
+router.get("/:id/products", verifyToken, checkBusinessAccess, getBusinessProducts);
+router.get("/:id/orders", verifyToken, checkBusinessAccess, getBusinessOrders);
+router.get("/:id/stats", verifyToken, checkBusinessAccess, getBusinessStats);
+
+// GET - Obtener negocio por ID (público)
 router.get("/:id", mapBusinessByID);
 
+// ═══════════════════════════════════════════════════════════════
+// RUTAS CRUD (protegidas)
+// ═══════════════════════════════════════════════════════════════
 
 // POST - Crear un nuevo negocio (solo admin)
 router.post('/create', verifyToken, requireRole("admin"), uploadBusinessImages, createBusiness);
