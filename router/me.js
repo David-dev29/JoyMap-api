@@ -4,6 +4,7 @@ import { getMyProfile, updateMyProfile } from "../controllers/me/profile.js";
 import { getMyBusiness, updateMyBusiness } from "../controllers/me/business.js";
 import { getMyProducts, getMyProductsStats } from "../controllers/me/products.js";
 import { getMyOrders, getMyActiveOrders, getMyOrdersStats } from "../controllers/me/orders.js";
+import { getMyCategories, getMyCategoryById, getMyCategoriesStats } from "../controllers/me/categories.js";
 
 const router = Router();
 
@@ -27,6 +28,13 @@ router.put("/business", requireRole("business_owner"), updateMyBusiness);
 // ═══════════════════════════════════════════════════════════
 router.get("/products", requireRole("business_owner", "admin"), getMyProducts);
 router.get("/products/stats", requireRole("business_owner", "admin"), getMyProductsStats);
+
+// ═══════════════════════════════════════════════════════════
+// CATEGORÍAS - Solo business_owner
+// ═══════════════════════════════════════════════════════════
+router.get("/categories", requireRole("business_owner", "admin"), getMyCategories);
+router.get("/categories/stats", requireRole("business_owner", "admin"), getMyCategoriesStats);
+router.get("/categories/:id", requireRole("business_owner", "admin"), getMyCategoryById);
 
 // ═══════════════════════════════════════════════════════════
 // ÓRDENES - Todos (filtrado por rol en controller)
