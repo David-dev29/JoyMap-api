@@ -19,28 +19,38 @@ import indexRouter from "./router/index.js";
 const app = express();
 const server = createServer(app);
 
-// 🔒 ORÍGENES PERMITIDOS (desde .env)
+// 🔒 ORÍGENES PERMITIDOS
+const isDev = process.env.NODE_ENV !== 'production';
+
+// En desarrollo: permite todos los orígenes o usa la lista
+// En producción: solo orígenes específicos
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-  : ['http://localhost:5173', 'http://localhost:5174'];
+  : [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://192.168.100.7:5173',
+      'http://192.168.100.7:5174'
+    ];
 
-// 🔌 Socket.IO con CORS CORRECTO
+// Configuración de CORS
+const corsOptions = {
+  origin: isDev ? true : allowedOrigins, // true = permite cualquier origen en dev
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+// 🔌 Socket.IO con CORS
 const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 // 🔧 Middleware Express
 app.use(helmet());
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(morgan("dev"));
 app.use(express.json());
