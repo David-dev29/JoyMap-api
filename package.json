@@ -20,7 +20,8 @@
     "migrateImages": "node ./models/data/migrateImages.js",
     "create-admin": "node seeds/createAdmin.js",
     "assign-owner": "node seeds/assignBusinessOwner.js",
-    "migrate-products-business": "node seeds/migrateProductsBusiness.js"
+    "migrate-products-business": "node seeds/migrateProductsBusiness.js",
+    "migrate-product-categories": "node scripts/migrate-product-categories.js"
   },
   "keywords": [],
   "author": "",
