@@ -50,7 +50,8 @@ export const register = async (req, res) => {
       email,
       phone,
       password: hashedPassword,
-      role: "customer"
+      role: "customer",
+      hasPassword: true
     });
 
     // Generar token
