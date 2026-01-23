@@ -1,7 +1,7 @@
-import Category from "../../models/Category.js";
+import ProductCategory from "../../models/ProductCategory.js";
 import Product from "../../models/Product.js";
 
-// GET /api/me/categories - Obtener categorías de mi negocio
+// GET /api/me/categories - Obtener categorías de productos de mi negocio
 export const getMyCategories = async (req, res) => {
   try {
     // Verificar que el usuario tenga un negocio asignado
@@ -12,21 +12,28 @@ export const getMyCategories = async (req, res) => {
       });
     }
 
-    const { populate } = req.query;
+    const { populate, includeInactive } = req.query;
 
-    // Buscar categorías donde storeId = businessId del usuario
-    let query = Category.find({ storeId: req.user.businessId });
+    let filter = { businessId: req.user.businessId };
+
+    // Por defecto solo activas, salvo que pida inactivas
+    if (includeInactive !== 'true') {
+      filter.isActive = true;
+    }
+
+    let query = ProductCategory.find(filter)
+      .sort({ order: 1, name: 1 });
 
     // Si se solicita populate de productos
     if (populate === 'products') {
       query = query.populate({
         path: 'products',
         match: { businessId: req.user.businessId },
-        options: { sort: { createdAt: -1 } }
+        options: { sort: { name: 1 } }
       });
     }
 
-    const categories = await query.sort({ name: 1 });
+    const categories = await query;
 
     res.json({
       success: true,
@@ -56,16 +63,16 @@ export const getMyCategoryById = async (req, res) => {
     const { id } = req.params;
     const { populate } = req.query;
 
-    let query = Category.findOne({
+    let query = ProductCategory.findOne({
       _id: id,
-      storeId: req.user.businessId
+      businessId: req.user.businessId
     });
 
     if (populate === 'products') {
       query = query.populate({
         path: 'products',
         match: { businessId: req.user.businessId },
-        options: { sort: { createdAt: -1 } }
+        options: { sort: { name: 1 } }
       });
     }
 
@@ -107,7 +114,7 @@ export const getMyCategoriesStats = async (req, res) => {
       { $match: { businessId: req.user.businessId } },
       {
         $group: {
-          _id: "$categoryId",
+          _id: "$productCategoryId",
           productCount: { $sum: 1 },
           availableCount: {
             $sum: { $cond: [{ $eq: ["$availability", "Disponible"] }, 1, 0] }
@@ -116,7 +123,7 @@ export const getMyCategoriesStats = async (req, res) => {
       },
       {
         $lookup: {
-          from: "categories",
+          from: "productcategories",
           localField: "_id",
           foreignField: "_id",
           as: "category"
@@ -127,17 +134,27 @@ export const getMyCategoriesStats = async (req, res) => {
         $project: {
           _id: 1,
           name: "$category.name",
+          icon: "$category.icon",
+          order: "$category.order",
           productCount: 1,
           availableCount: 1
         }
       },
-      { $sort: { productCount: -1 } }
+      { $sort: { order: 1, productCount: -1 } }
     ]);
+
+    // Contar categorías sin productos
+    const categoriesWithProducts = stats.filter(s => s._id !== null).map(s => s._id);
+    const emptyCategories = await ProductCategory.find({
+      businessId: req.user.businessId,
+      _id: { $nin: categoriesWithProducts }
+    }).select('name icon order');
 
     res.json({
       success: true,
-      totalCategories: stats.length,
-      stats
+      totalCategories: stats.length + emptyCategories.length,
+      stats,
+      emptyCategories
     });
   } catch (error) {
     console.error("Error getMyCategoriesStats:", error);

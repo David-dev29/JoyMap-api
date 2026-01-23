@@ -34,11 +34,18 @@ const schema = new Schema({
     trim: true,
     default: ''
   },
-  // Relación con la categoría a la que pertenece este producto
+  // Relación con la categoría legacy (stores)
   categoryId: {
     type: Schema.Types.ObjectId,
     ref: 'categories',
     required: false
+  },
+  // Relación con ProductCategory (categorías de productos por negocio)
+  productCategoryId: {
+    type: Schema.Types.ObjectId,
+    ref: 'productcategories',
+    index: true,
+    default: null
   },
   // Nombre de la subcategoría (legacy/cache)
   subcategory: {
@@ -79,9 +86,22 @@ const schema = new Schema({
   timestamps: true
 });
 
-// 🆕 Middleware pre-save para sincronizar category name con categoryId
+// Middleware pre-save para sincronizar category name
 schema.pre('save', async function(next) {
-  if (this.isModified('categoryId') && this.categoryId) {
+  // Sincronizar con ProductCategory (nuevo sistema)
+  if (this.isModified('productCategoryId') && this.productCategoryId) {
+    try {
+      const ProductCategory = model('productcategories');
+      const productCategory = await ProductCategory.findById(this.productCategoryId);
+      if (productCategory) {
+        this.category = productCategory.name;
+      }
+    } catch (error) {
+      console.error('Error sincronizando productCategory:', error);
+    }
+  }
+  // Sincronizar con Category legacy (si se usa)
+  else if (this.isModified('categoryId') && this.categoryId) {
     try {
       const Category = model('categories');
       const category = await Category.findById(this.categoryId);
