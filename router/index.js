@@ -11,6 +11,8 @@ import productsRouter from "./products.js";
 import kitchensRouter from "./kitchens.js";
 import businessesRouter from "./business.js";
 import categoriesBusinessesRouter from "./categoriesBusiness.js";
+import discountsRouter from "./discounts.js";
+import reviewsRouter from "./reviews.js";
 
 const router = Router();
 
@@ -30,5 +32,7 @@ router.use('/kitchens', kitchensRouter)
 router.use('/map', businessesRouter)
 router.use('/businesses', businessesRouter)
 router.use('/business-categories', categoriesBusinessesRouter)
+router.use('/discounts', discountsRouter)
+router.use('/reviews', reviewsRouter)
 
 export default router
