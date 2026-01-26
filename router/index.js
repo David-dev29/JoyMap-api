@@ -15,6 +15,7 @@ import discountsRouter from "./discounts.js";
 import reviewsRouter from "./reviews.js";
 import productCategoriesRouter from "./productCategories.js";
 import settingsRouter from "./settings.js";
+import couponsRouter from "./coupons.js";
 
 const router = Router();
 
@@ -38,5 +39,6 @@ router.use('/discounts', discountsRouter)
 router.use('/reviews', reviewsRouter)
 router.use('/product-categories', productCategoriesRouter)
 router.use('/settings', settingsRouter)
+router.use('/coupons', couponsRouter)
 
 export default router
