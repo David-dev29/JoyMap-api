@@ -17,6 +17,8 @@ const updateBusiness = async (req, res, next) => {
       minOrderAmount,
       coordinates,
       address,
+      paymentMethods,
+      brandColor,
     } = req.body;
 
     // Verificar que el negocio existe
@@ -40,6 +42,8 @@ const updateBusiness = async (req, res, next) => {
     if (deliveryCost !== undefined) updateData.deliveryCost = deliveryCost;
     if (minOrderAmount !== undefined) updateData.minOrderAmount = minOrderAmount;
     if (address) updateData.address = address;
+    if (paymentMethods !== undefined) updateData.paymentMethods = paymentMethods;
+    if (brandColor !== undefined) updateData.brandColor = brandColor;
 
     // Actualizar deliveryTime si se envía
     if (deliveryTime) {

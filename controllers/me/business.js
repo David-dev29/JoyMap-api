@@ -53,7 +53,9 @@ export const updateMyBusiness = async (req, res) => {
       deliveryTime,
       deliveryCost,
       minOrderAmount,
-      address
+      address,
+      paymentMethods,
+      brandColor
     } = req.body;
 
     // Solo permitir actualizar ciertos campos (no location, category, etc.)
@@ -65,6 +67,8 @@ export const updateMyBusiness = async (req, res) => {
     if (deliveryCost !== undefined) allowedUpdates.deliveryCost = deliveryCost;
     if (minOrderAmount !== undefined) allowedUpdates.minOrderAmount = minOrderAmount;
     if (address) allowedUpdates.address = address;
+    if (paymentMethods !== undefined) allowedUpdates.paymentMethods = paymentMethods;
+    if (brandColor !== undefined) allowedUpdates.brandColor = brandColor;
 
     const business = await Business.findByIdAndUpdate(
       req.user.businessId,

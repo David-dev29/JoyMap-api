@@ -19,7 +19,7 @@ export const getBusinessesByType = async (req, res) => {
         match: { type: type }, // ✅ Filtrar por tipo de categoría
         select: 'name slug icon type'
       })
-      .select('name category location mapIcon isOpen rating discount deliveryTime deliveryCost minOrderAmount logo banner address description')
+      .select('name category location mapIcon isOpen rating discount deliveryTime deliveryCost minOrderAmount logo banner address description paymentMethods brandColor')
       .sort({ createdAt: -1 });
 
     // Filtrar negocios que tengan categoría (el match puede devolver null)
@@ -49,7 +49,7 @@ export const allMapBusinesses = async (req, res, next) => {
   try {
     const businesses = await Business.find({ isActive: true })
       .populate('category', 'name slug icon type') // ✅ Agregado 'type'
-      .select('name category location mapIcon isOpen rating discount deliveryTime deliveryCost minOrderAmount logo banner')
+      .select('name category location mapIcon isOpen rating discount deliveryTime deliveryCost minOrderAmount logo banner paymentMethods brandColor')
       .sort({ createdAt: -1 });
 
     return res.status(200).json({

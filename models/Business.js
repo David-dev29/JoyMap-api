@@ -50,6 +50,19 @@ const businessSchema = new mongoose.Schema(
       ref: "users",
       default: null
     },
+
+    // Métodos de pago aceptados
+    paymentMethods: {
+      cash: { type: Boolean, default: true },        // Efectivo
+      card: { type: Boolean, default: false },       // Tarjeta
+      transfer: { type: Boolean, default: false }    // Transferencia
+    },
+
+    // Color personalizado del negocio (para UI del menú)
+    brandColor: {
+      type: String,
+      default: null  // Si es null, usar rojo por defecto (#E53935)
+    },
   },
   { timestamps: true }
 );
