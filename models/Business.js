@@ -16,6 +16,19 @@ const businessSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Tipo de icono para el menú: 'emoji', 'svg', 'image'
+    iconType: {
+      type: String,
+      enum: ["emoji", "svg", "image"],
+      default: "emoji"
+    },
+
+    // Código SVG del icono (cuando iconType es 'svg')
+    iconSvg: {
+      type: String,
+      default: null
+    },
+
     // Categoría (referencia real)
     category: {
       type: mongoose.Schema.Types.ObjectId,

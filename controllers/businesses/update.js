@@ -11,7 +11,9 @@ const updateBusiness = async (req, res, next) => {
       category,
       isActive,
       isOpen,
-      mapIcon, // 🔥 NUEVO
+      mapIcon,
+      iconType,
+      iconSvg,
       deliveryTime,
       deliveryCost,
       minOrderAmount,
@@ -36,7 +38,9 @@ const updateBusiness = async (req, res, next) => {
     if (name) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (category) updateData.category = category;
-    if (mapIcon) updateData.mapIcon = mapIcon; // 🔥 NUEVO
+    if (mapIcon) updateData.mapIcon = mapIcon;
+    if (iconType !== undefined) updateData.iconType = iconType;
+    if (iconSvg !== undefined) updateData.iconSvg = iconSvg;
     if (isActive !== undefined) updateData.isActive = isActive;
     if (isOpen !== undefined) updateData.isOpen = isOpen;
     if (deliveryCost !== undefined) updateData.deliveryCost = deliveryCost;
@@ -45,14 +49,18 @@ const updateBusiness = async (req, res, next) => {
     if (paymentMethods !== undefined) updateData.paymentMethods = paymentMethods;
     if (brandColor !== undefined) updateData.brandColor = brandColor;
 
-    // Actualizar deliveryTime si se envía
+    // Actualizar deliveryTime si se envía (puede venir como string de FormData o como objeto)
     if (deliveryTime) {
-      updateData.deliveryTime = JSON.parse(deliveryTime);
+      updateData.deliveryTime = typeof deliveryTime === "string"
+        ? JSON.parse(deliveryTime)
+        : deliveryTime;
     }
 
-    // Actualizar coordenadas si se envían
+    // Actualizar coordenadas si se envían (puede venir como string de FormData o como array)
     if (coordinates) {
-      const coords = JSON.parse(coordinates);
+      const coords = typeof coordinates === "string"
+        ? JSON.parse(coordinates)
+        : coordinates;
       if (Array.isArray(coords) && coords.length === 2) {
         updateData.location = {
           type: "Point",
