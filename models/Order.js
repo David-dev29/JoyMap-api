@@ -12,6 +12,7 @@ const schema = new Schema({
       name: { type: String }, // redundancia para consultas rápidas
       price: { type: Number },
       quantity: { type: Number, required: true },
+      image: { type: String, default: null }, // snapshot de la imagen al momento de la compra
       status: {
         type: String,
         enum: ['pending', 'preparing', 'prepared'],

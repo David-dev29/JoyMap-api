@@ -32,7 +32,7 @@ const orderPopulate = [
   { path: "businessId", select: "name" },
   {
     path: "items.productId",
-    select: "name price kitchenId",
+    select: "name price kitchenId image",
     populate: { path: "kitchenId", select: "name" }
   }
 ];

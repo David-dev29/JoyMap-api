@@ -1,4 +1,5 @@
 import Order from "../../models/Order.js";
+import Product from "../../models/Product.js";
 import { io } from "../../server.js";
 
 const createOrder = async (req, res, next) => {
@@ -71,11 +72,28 @@ const createOrder = async (req, res, next) => {
     const lastNumber = lastOrderToday?.orderNumber || 0;
     const newOrderNumber = lastNumber + 1;
 
+    // Enriquecer items con datos del producto (snapshot al momento de la compra)
+    const productIds = items.map(item => item.productId);
+    const products = await Product.find({ _id: { $in: productIds } }).select("_id name price image");
+    const productMap = new Map(products.map(p => [p._id.toString(), p]));
+
+    const enrichedItems = items.map(item => {
+      const product = productMap.get(item.productId?.toString() || item.productId);
+      return {
+        productId: item.productId,
+        name: item.name || product?.name,
+        price: item.price ?? product?.price,
+        quantity: item.quantity,
+        image: item.image || product?.image || null, // Prioridad: frontend > producto > null
+        status: "pending"
+      };
+    });
+
     // Crear orden
     const orderData = {
       customerId: finalCustomerId,
       businessId,
-      items,
+      items: enrichedItems,
       subtotal: subtotal || 0,
       deliveryFee: deliveryFee || 0,
       total: total || 0,
