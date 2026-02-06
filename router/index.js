@@ -17,6 +17,7 @@ import productCategoriesRouter from "./productCategories.js";
 import settingsRouter from "./settings.js";
 import couponsRouter from "./coupons.js";
 import statsRouter from "./stats.js";
+import promotionsRouter from "./promotions.js";
 
 const router = Router();
 
@@ -42,5 +43,6 @@ router.use('/product-categories', productCategoriesRouter)
 router.use('/settings', settingsRouter)
 router.use('/coupons', couponsRouter)
 router.use('/stats', statsRouter)
+router.use('/promotions', promotionsRouter)
 
 export default router

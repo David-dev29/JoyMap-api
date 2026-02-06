@@ -9,7 +9,10 @@ const createBusiness = async (req, res, next) => {
       description,
       category,
       isOpen,
-      mapIcon, // 🔥 NUEVO
+      mapIcon,
+      emoji, // Alias de mapIcon (el dashboard envía "emoji")
+      iconType,
+      iconSvg,
       deliveryTime,
       deliveryCost,
       minOrderAmount,
@@ -59,7 +62,9 @@ const createBusiness = async (req, res, next) => {
       description,
       category,
       isOpen: isOpen ?? true,
-      mapIcon: mapIcon || '📍', // 🔥 NUEVO con fallback
+      mapIcon: mapIcon || emoji || '📍',
+      iconType: iconType || 'emoji',
+      iconSvg: iconSvg || null,
       deliveryTime: {
         min: Number(parsedDeliveryTime.min) || 20,
         max: Number(parsedDeliveryTime.max) || 40,
