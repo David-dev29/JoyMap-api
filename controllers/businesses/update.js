@@ -12,6 +12,7 @@ const updateBusiness = async (req, res, next) => {
       isActive,
       isOpen,
       mapIcon,
+      emoji, // Alias de mapIcon (el dashboard envía "emoji")
       iconType,
       iconSvg,
       deliveryTime,
@@ -38,7 +39,7 @@ const updateBusiness = async (req, res, next) => {
     if (name) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (category) updateData.category = category;
-    if (mapIcon) updateData.mapIcon = mapIcon;
+    if (mapIcon || emoji) updateData.mapIcon = mapIcon || emoji;
     if (iconType !== undefined) updateData.iconType = iconType;
     if (iconSvg !== undefined) updateData.iconSvg = iconSvg;
     if (isActive !== undefined) updateData.isActive = isActive;
