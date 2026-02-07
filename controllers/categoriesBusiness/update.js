@@ -3,6 +3,7 @@
 // ============================================
 
 import CategoryBusiness from "../../models/CategoryBusiness.js";
+import { uploadToS3 } from "../../utils/s3Uploader.js";
 import slugify from "slugify";
 
 export const updateCategoryBusiness = async (req, res) => {
@@ -29,6 +30,10 @@ export const updateCategoryBusiness = async (req, res) => {
         });
       }
       update.type = type;
+    }
+
+    if (req.file) {
+      update.image = await uploadToS3(req.file, "categoriesBusiness");
     }
 
     const category = await CategoryBusiness.findByIdAndUpdate(

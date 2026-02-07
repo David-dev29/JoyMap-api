@@ -3,6 +3,7 @@
 // controllers/category/createCategory.js
 
 import CategoryBusiness from "../../models/CategoryBusiness.js";
+import { uploadToS3 } from "../../utils/s3Uploader.js";
 import slugify from "slugify";
 
 export const createCategoryBusiness = async (req, res) => {
@@ -27,11 +28,17 @@ export const createCategoryBusiness = async (req, res) => {
       });
     }
 
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = await uploadToS3(req.file, "categoriesBusiness");
+    }
+
     const category = await CategoryBusiness.create({
       name,
       slug,
       icon: icon || '🍽️',
-      type: type || 'comida' // ✅ Default a 'comida'
+      type: type || 'comida',
+      image: imageUrl,
     });
 
     res.json({ success: true, response: category });

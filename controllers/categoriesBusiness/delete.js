@@ -1,5 +1,5 @@
 // controllers/category/deleteCategory.js
-import CategoryBusiness from "../../models/Category.js";
+import CategoryBusiness from "../../models/CategoryBusiness.js";
 
 export const deleteCategoryBusiness = async (req, res) => {
   try {
