@@ -22,6 +22,7 @@ const updateBusiness = async (req, res, next) => {
       address,
       paymentMethods,
       brandColor,
+      bankInfo,
     } = req.body;
 
     // Verificar que el negocio existe
@@ -49,6 +50,13 @@ const updateBusiness = async (req, res, next) => {
     if (address) updateData.address = address;
     if (paymentMethods !== undefined) updateData.paymentMethods = paymentMethods;
     if (brandColor !== undefined) updateData.brandColor = brandColor;
+
+    // Parsear bankInfo (viene como string JSON del FormData)
+    if (bankInfo !== undefined) {
+      updateData.bankInfo = typeof bankInfo === "string"
+        ? JSON.parse(bankInfo)
+        : bankInfo;
+    }
 
     // Actualizar deliveryTime si se envía (puede venir como string de FormData o como objeto)
     if (deliveryTime) {

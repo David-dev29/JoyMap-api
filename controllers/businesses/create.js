@@ -18,6 +18,7 @@ const createBusiness = async (req, res, next) => {
       minOrderAmount,
       coordinates, // [lng, lat] o string
       address,
+      bankInfo,
     } = req.body;
 
     // 🔹 Validaciones básicas
@@ -77,6 +78,13 @@ const createBusiness = async (req, res, next) => {
       },
       address,
     };
+
+    // 🔹 Parsear bankInfo (viene como string JSON del FormData)
+    if (bankInfo) {
+      businessData.bankInfo = typeof bankInfo === "string"
+        ? JSON.parse(bankInfo)
+        : bankInfo;
+    }
 
     // 🔹 Manejo de imágenes
     if (req.files) {

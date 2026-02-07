@@ -71,6 +71,14 @@ const businessSchema = new mongoose.Schema(
       transfer: { type: Boolean, default: false }    // Transferencia
     },
 
+    // Datos bancarios para transferencias
+    bankInfo: {
+      bankName: { type: String, default: null },
+      accountNumber: { type: String, default: null },
+      clabe: { type: String, default: null },
+      accountHolder: { type: String, default: null },
+    },
+
     // Color personalizado del negocio (para UI del menú)
     brandColor: {
       type: String,
