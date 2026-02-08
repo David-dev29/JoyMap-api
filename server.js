@@ -64,6 +64,14 @@ app.use("/api", indexRouter);
 io.on("connection", (socket) => {
   console.log("⚡ Nuevo cliente conectado:", socket.id);
 
+  // Unir al usuario a su room personal para notificaciones
+  socket.on("join", (userId) => {
+    if (userId) {
+      socket.join(`user_${userId}`);
+      console.log(`👤 Usuario ${userId} unido a room user_${userId}`);
+    }
+  });
+
   socket.on("ping", (msg) => {
     console.log("Mensaje recibido:", msg);
     socket.emit("pong", "Hola desde el servidor!");
