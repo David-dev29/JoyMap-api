@@ -1,6 +1,8 @@
 import Order from "../../models/Order.js";
 import Product from "../../models/Product.js";
+import Business from "../../models/Business.js";
 import { io } from "../../server.js";
+import { createNotification } from "../notifications.js";
 
 const createOrder = async (req, res, next) => {
   try {
@@ -119,6 +121,18 @@ const createOrder = async (req, res, next) => {
     // Emitir también al room del negocio específico
     if (businessId) {
       io.to(`business:${businessId}`).emit("order:new", populatedOrder);
+
+      // Notificar al owner del negocio
+      const business = await Business.findById(businessId);
+      if (business && business.owner) {
+        await createNotification({
+          userId: business.owner,
+          type: "order",
+          title: "¡Nuevo pedido!",
+          message: `Tienes un nuevo pedido #${newOrderNumber} por $${total || 0}`,
+          data: { orderId: newOrder._id },
+        });
+      }
     }
 
     return res.status(201).json({

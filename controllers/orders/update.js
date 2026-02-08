@@ -1,28 +1,54 @@
 import Order from "../../models/Order.js";
 import Payment from "../../models/Payment.js";
-import { io } from "../../server.js"; // 🔹 Importa la instancia de io
+import { io } from "../../server.js";
+import { createNotification } from "../notifications.js";
 
 export const updateOrder = async (req, res, next) => {
   try {
-    // 1. Actualiza la orden como lo haces ahora
+    // Obtener el pedido actual antes de actualizar
+    const currentOrder = await Order.findById(req.params.id);
+    if (!currentOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const oldStatus = currentOrder.status;
+    const newStatus = req.body.status;
+
+    // Actualizar el pedido
     const orderUpdated = await Order.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
-    
-    if (!orderUpdated) {
-      return res.status(404).json({ message: "Order not found" });
-    }
 
-    // ✨ LA SOLUCIÓN: Antes de responder, popula todos los campos necesarios.
     const populatedOrder = await orderUpdated.populate([
         { path: 'customerId', select: 'name phone' },
         { path: 'deliveryPerson' },
-        { path: 'payments' } // <--- ESTA LÍNEA ES LA CLAVE
+        { path: 'payments' }
     ]);
 
-    // 2. Emite y responde con la orden COMPLETA
+    // Si el status cambió, notificar al cliente
+    if (newStatus && newStatus !== oldStatus) {
+      const statusMessages = {
+        accepted: { title: "¡Pedido aceptado!", message: "Tu pedido ha sido aceptado y pronto comenzarán a prepararlo" },
+        preparing: { title: "Preparando tu pedido", message: "Tu pedido está siendo preparado" },
+        onTheWay: { title: "¡Tu pedido va en camino!", message: "El repartidor está en camino con tu pedido" },
+        delivered: { title: "¡Pedido entregado!", message: "Tu pedido ha sido entregado. ¡Buen provecho!" },
+        cancelled: { title: "Pedido cancelado", message: "Tu pedido ha sido cancelado" },
+      };
+
+      const notification = statusMessages[newStatus];
+      if (notification && currentOrder.customerId) {
+        await createNotification({
+          userId: currentOrder.customerId,
+          type: "order",
+          title: notification.title,
+          message: notification.message,
+          data: { orderId: req.params.id, status: newStatus },
+        });
+      }
+    }
+
     io.emit("order:update", populatedOrder);
     return res.status(200).json({ response: populatedOrder });
 
@@ -62,6 +88,17 @@ export const cancelOrder = async (req, res, next) => {
       .populate("customerId", "name phone")
       .populate("deliveryPerson");
     
+    // Notificar al cliente
+    if (order.customerId) {
+      await createNotification({
+        userId: order.customerId,
+        type: "order",
+        title: "Pedido cancelado",
+        message: reason ? `Tu pedido ha sido cancelado: ${reason}` : "Tu pedido ha sido cancelado",
+        data: { orderId: order._id, status: "cancelled" },
+      });
+    }
+
     // Emitir evento al frontend
     io.emit("order:update", orderCancelled);
 

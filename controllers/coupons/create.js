@@ -1,4 +1,7 @@
 import Coupon from "../../models/Coupon.js";
+import UserFavorite from "../../models/UserFavorite.js";
+import Business from "../../models/Business.js";
+import { createNotification } from "../notifications.js";
 
 // Crear cupón (Admin o Business Owner)
 export const createCoupon = async (req, res) => {
@@ -38,6 +41,30 @@ export const createCoupon = async (req, res) => {
       startsAt,
       expiresAt
     });
+
+    // Notificar a usuarios que tienen este negocio en favoritos
+    try {
+      const favorites = await UserFavorite.find({ businessId: targetBusinessId });
+
+      if (favorites.length > 0) {
+        const business = await Business.findById(targetBusinessId).select("name");
+        const discountText = coupon.discountType === "percentage"
+          ? `${coupon.discount}% de descuento`
+          : `$${coupon.discount} de descuento`;
+
+        for (const fav of favorites) {
+          await createNotification({
+            userId: fav.userId,
+            type: "promo",
+            title: `¡Nuevo cupón en ${business?.name || "tu favorito"}!`,
+            message: `${discountText} con el código ${coupon.code}`,
+            data: { businessId: targetBusinessId, couponId: coupon._id, code: coupon.code },
+          });
+        }
+      }
+    } catch (notifError) {
+      console.error("Error enviando notificaciones de cupón:", notifError);
+    }
 
     res.status(201).json({
       success: true,

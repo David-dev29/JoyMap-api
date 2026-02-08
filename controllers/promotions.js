@@ -1,5 +1,8 @@
 import Promotion from "../models/Promotion.js";
 import { uploadToS3 } from "../utils/s3Uploader.js";
+import UserFavorite from "../models/UserFavorite.js";
+import Business from "../models/Business.js";
+import { createNotification } from "./notifications.js";
 
 // GET /api/promotions - Obtener promociones activas (público)
 export const getActivePromotions = async (req, res) => {
@@ -100,6 +103,29 @@ export const createPromotion = async (req, res) => {
     });
 
     await promotion.save();
+
+    // Notificar a usuarios que tienen este negocio en favoritos
+    if (promotion.linkType === "business" && promotion.linkValue) {
+      try {
+        const favorites = await UserFavorite.find({ businessId: promotion.linkValue });
+
+        if (favorites.length > 0) {
+          const business = await Business.findById(promotion.linkValue).select("name");
+
+          for (const fav of favorites) {
+            await createNotification({
+              userId: fav.userId,
+              type: "promo",
+              title: `¡Nueva promo en ${business?.name || "tu favorito"}!`,
+              message: promotion.title || "Hay una nueva promoción disponible",
+              data: { businessId: promotion.linkValue, promotionId: promotion._id },
+            });
+          }
+        }
+      } catch (notifError) {
+        console.error("Error enviando notificaciones de promoción:", notifError);
+      }
+    }
 
     res.status(201).json({ success: true, data: promotion });
   } catch (error) {

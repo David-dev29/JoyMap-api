@@ -19,6 +19,7 @@ import couponsRouter from "./coupons.js";
 import statsRouter from "./stats.js";
 import promotionsRouter from "./promotions.js";
 import notificationsRouter from "./notifications.js";
+import favoritesRouter from "./favorites.js";
 
 const router = Router();
 
@@ -46,5 +47,6 @@ router.use('/coupons', couponsRouter)
 router.use('/stats', statsRouter)
 router.use('/promotions', promotionsRouter)
 router.use('/notifications', notificationsRouter)
+router.use('/favorites', favoritesRouter)
 
 export default router
