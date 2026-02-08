@@ -64,6 +64,8 @@ export const createPromotion = async (req, res) => {
       type,
       linkType,
       linkValue,
+      badge,
+      contentOrder,
       backgroundColor,
       textColor,
       isActive,
@@ -85,6 +87,10 @@ export const createPromotion = async (req, res) => {
       type: type || "carousel",
       linkType: linkType || "none",
       linkValue,
+      badge,
+      contentOrder: contentOrder
+        ? (typeof contentOrder === "string" ? JSON.parse(contentOrder) : contentOrder)
+        : ["title", "badge", "subtitle"],
       backgroundColor,
       textColor,
       isActive: isActive !== undefined ? isActive : true,
@@ -116,6 +122,8 @@ export const updatePromotion = async (req, res) => {
       type,
       linkType,
       linkValue,
+      badge,
+      contentOrder,
       backgroundColor,
       textColor,
       isActive,
@@ -135,6 +143,12 @@ export const updatePromotion = async (req, res) => {
     if (order !== undefined) promotion.order = order;
     if (startsAt !== undefined) promotion.startsAt = startsAt;
     if (expiresAt !== undefined) promotion.expiresAt = expiresAt;
+    if (badge !== undefined) promotion.badge = badge;
+    if (contentOrder !== undefined) {
+      promotion.contentOrder = typeof contentOrder === "string"
+        ? JSON.parse(contentOrder)
+        : contentOrder;
+    }
 
     if (req.file) {
       promotion.image = await uploadToS3(req.file, "promotions");

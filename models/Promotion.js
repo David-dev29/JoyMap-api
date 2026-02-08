@@ -31,6 +31,17 @@ const promotionSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    // Etiqueta/badge (ej: "30% OFF", "Nuevo", "Popular")
+    badge: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    // Orden de los elementos visuales en la tarjeta
+    contentOrder: {
+      type: [String],
+      default: ["title", "badge", "subtitle"],
+    },
     // Configuración visual
     backgroundColor: {
       type: String,
